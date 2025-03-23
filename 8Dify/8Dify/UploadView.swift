@@ -73,12 +73,9 @@ struct UploadView: View {
     
     func processAudio(inputURL: URL) {
         let fileManager = FileManager.default
-        // Get the app's Documents directory
         let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        // Create a local URL in Documents using the same file name as the input file
         let localInputURL = documentsURL.appendingPathComponent(inputURL.lastPathComponent)
         
-        // Begin security-scoped access on the original file URL (if supported)
         var inputNeedsStopAccessing = false
         if inputURL.startAccessingSecurityScopedResource() {
             inputNeedsStopAccessing = true
@@ -89,7 +86,6 @@ struct UploadView: View {
             }
         }
         
-        // Copy the input file into our Documents folder if it doesn't already exist
         if !fileManager.fileExists(atPath: localInputURL.path) {
             do {
                 try fileManager.copyItem(at: inputURL, to: localInputURL)
@@ -107,7 +103,6 @@ struct UploadView: View {
             return
         }
         
-        // No need to security-access the local copy (Documents folder is in our sandbox)
         let engine = AVAudioEngine()
         let player = AVAudioPlayerNode()
         let reverb = AVAudioUnitReverb()
@@ -125,15 +120,12 @@ struct UploadView: View {
             let audioFile = try AVAudioFile(forReading: localInputURL)
             print("Successfully loaded input file from: \(localInputURL.path)")
             
-            // Schedule the file for playback
             player.scheduleFile(audioFile, at: nil, completionHandler: nil)
             
-            // Enable offline rendering
             try engine.enableManualRenderingMode(.offline, format: audioFile.processingFormat, maximumFrameCount: 4096)
             try engine.start()
             player.play()
             
-            // Prepare the output file URL in Documents
             let outputURL = documentsURL.appendingPathComponent("ProcessedAudio.m4a")
             print("📂 Output file will be saved to: \(outputURL)")
             
@@ -159,7 +151,6 @@ struct UploadView: View {
             let buffer = AVAudioPCMBuffer(pcmFormat: engine.manualRenderingFormat,
                                           frameCapacity: engine.manualRenderingMaximumFrameCount)!
             
-            // Process and apply the 8D-like panning effect
             while engine.manualRenderingSampleTime < audioFile.length {
                 let phase = Float(engine.manualRenderingSampleTime) / Float(audioFile.processingFormat.sampleRate) * 2.0 * Float.pi * 0.5
                 let newPan = sin(phase)
