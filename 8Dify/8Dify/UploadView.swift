@@ -93,13 +93,13 @@ struct UploadView: View {
         if !fileManager.fileExists(atPath: localInputURL.path) {
             do {
                 try fileManager.copyItem(at: inputURL, to: localInputURL)
-                print("✅ Copied file to local directory: \(localInputURL)")
+                print("Copied file to local directory: \(localInputURL)")
             } catch {
                 print("E: Error copying file: \(error.localizedDescription)")
                 return
             }
         } else {
-            print("✅ Local file already exists at: \(localInputURL)")
+            print("Local file already exists at: \(localInputURL)")
         }
         
         guard fileManager.fileExists(atPath: localInputURL.path) else {
@@ -123,7 +123,7 @@ struct UploadView: View {
         
         do {
             let audioFile = try AVAudioFile(forReading: localInputURL)
-            print("✅ Successfully loaded input file from: \(localInputURL.path)")
+            print("Successfully loaded input file from: \(localInputURL.path)")
             
             // Schedule the file for playback
             player.scheduleFile(audioFile, at: nil, completionHandler: nil)
@@ -140,7 +140,7 @@ struct UploadView: View {
             if fileManager.fileExists(atPath: outputURL.path) {
                 do {
                     try fileManager.removeItem(at: outputURL)
-                    print("✅ Existing output file removed.")
+                    print("Existing output file removed.")
                 } catch {
                     print("E: Could not remove existing file: \(error.localizedDescription)")
                     return
@@ -179,7 +179,7 @@ struct UploadView: View {
             }
             
             engine.stop()
-            print("✅ Processed audio saved at: \(outputURL)")
+            print("Processed audio saved at: \(outputURL)")
             
         } catch {
             print("E: Error processing audio: \(error.localizedDescription)")
