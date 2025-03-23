@@ -107,12 +107,10 @@ struct AudioPlayerView: View {
         player.play()
         isPlaying = true
         
-        // Start a timer to update the progress
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
             if let player = audioPlayer {
                 playbackProgress = player.currentTime / player.duration
                 
-                // Check if playback has ended
                 if !player.isPlaying && playbackProgress >= 1.0 {
                     resetAudio()
                 }
